@@ -1,0 +1,18 @@
+/* File brt_utc.c */
+
+
+#include "brt_utc.h"
+
+uint64_t address_data = APP_START_ADDRESS;
+uint32_t flag_addr = 0x0800FC00;
+uint32_t flag_data = 0x12345678;
+
+void set_overwrite_flag(void) {
+			HAL_FLASH_Unlock();
+        HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, flag_addr, flag_data); 
+        HAL_FLASH_Lock(); 
+        NVIC_SystemReset();
+}
+
+
+
