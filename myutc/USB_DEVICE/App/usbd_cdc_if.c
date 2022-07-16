@@ -22,8 +22,6 @@
 #include "usbd_cdc_if.h"
 
 /* USER CODE BEGIN INCLUDE */
-#define BUF_SIZE 32768 // 2^15 
-#define BUF_MASK (BUF_SIZE - 1)
 /* USER CODE END INCLUDE */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -99,8 +97,6 @@ char pages_count = 0;
 uint8_t check_mailbox = 0;
 uint8_t count_receives = 0;
 
-unsigned int circle[BUF_SIZE] = {0};
-unsigned int tail = 0, head = 0;
 /* USER CODE END PRIVATE_VARIABLES */
 
 /**
@@ -330,10 +326,6 @@ static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
     }
     else	{ //receive firmware data
         if(buf_rx_0[0] == 'E' && buf_rx_0[1] == 'N' && buf_rx_0[2] == 'D')	{ //checking the end of the firmware transfer
-            program_data = 0;
-            char pages_count = 0;
-            uint8_t check_mailbox = 0;
-            count_receives = 0;
             FLAG_DOWNLOAD_OVER = 1;
         }
         else	{//???????? ????? ????????? ????????? ????????
@@ -344,12 +336,14 @@ static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
                 buf_rx_0[i] = buf_rx_0[i] | buf_rx_0[i+1]; //
                 program_data_1 |= buf_rx_0[i] <<(i*4); //
             }
-            RAM_buf[RAM_buf_counter] = program_data_1; //?????????? ??????????????? ?????? ? ????? ???????? ? ???
+            //RAM_buf[RAM_buf_counter] = program_data_1; //?????????? ??????????????? ?????? ? ????? ???????? ? ???
             RAM_buf_counter++; //?????????? ???????? ???????? ???? ????????
+						circle[head++] = program_data_1; //write data to circle buffer
+						head &= BUF_MASK;
+						
             program_data_1 = 0;  //clear WORD
-            if (cells_count == 266)	{
+            if (cells_count == 266)	
                 cells_count = 0;
-            }
         }
         return (USBD_OK);
     }

@@ -51,7 +51,8 @@
 #define APP_RX_DATA_SIZE  1000
 #define APP_TX_DATA_SIZE  1000
 /* USER CODE BEGIN EXPORTED_DEFINES */
-
+#define BUF_SIZE 2048 // 2^13 
+#define BUF_MASK (BUF_SIZE - 1)
 /* USER CODE END EXPORTED_DEFINES */
 
 /**
@@ -113,10 +114,13 @@ extern uint32_t mailBox_0;
 extern uint32_t mailBox_1;
 extern uint32_t mailBox_2;
 extern uint32_t RAM_buf_counter;
-extern uint32_t RAM_buf[8000];
+//extern uint32_t RAM_buf[8000];
 extern uint64_t count_pages;
 extern uint64_t address_data;
 extern uint8_t circuit_id;
+
+extern uint32_t circle[BUF_SIZE];
+extern uint32_t tail, head;
 /* USER CODE END EXPORTED_VARIABLES */
 
 /**
